@@ -4,6 +4,8 @@
 训练框架、模型结构、数据管线、SFT、推理全部手写，无第三方训练框架依赖（只有 `torch` + `sentencepiece`）。
 
 <p align="center">
+  <a href="https://github.com/cmddirexit/miniNLM/actions/workflows/ci.yml"><img src="https://github.com/cmddirexit/miniNLM/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://huggingface.co/wcldehgfc/miniNLM-thin-46m"><img src="https://img.shields.io/badge/%F0%9F%A4%97-weights-yellow.svg" alt="HuggingFace"></a>
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/pytorch-2.4%2B-ee4c2c.svg" alt="PyTorch 2.4+">
@@ -64,7 +66,7 @@ cd miniNLM-weights && python example.py --prompt "他推开客栈的门，"
 ## 快速开始
 
 ```bash
-git clone <this-repo> && cd miniNLM
+git clone https://github.com/cmddirexit/miniNLM && cd miniNLM
 pip install -r requirements.txt          # ROCm 见文件内注释
 
 # 1) 准备数据：data_v4/ 下需要 train.bin（uint16 token 流）、val.bin、
