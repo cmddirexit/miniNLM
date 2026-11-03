@@ -17,6 +17,8 @@ pipeline_tag: text-generation
 一个**从零训练**的中文小模型（46.34M 参数，非嵌入 27.90M），语料是中文网络小说，训练了 7.2B token。
 适合用来学习语言模型结构、跑通训练/推理流程、或者当一个小体积的中文续写玩具模型。
 
+配套代码：**[github.com/cmddirexit/miniNLM](https://github.com/cmddirexit/miniNLM)**
+
 权重文件 `model.safetensors`（@SIZE@，fp32），结构代码随仓库附带，不依赖其它仓库即可加载。
 
 ## 指标
@@ -104,6 +106,7 @@ print(sp.decode(out[0][len(ids):].tolist()))   # 只解码新生成的部分
 
 ## 训练与许可
 
-- 架构、训练脚本、评测脚本随训练仓库一起提供（同一份 `model.py` 已放在本仓库里，权重自带架构）
+- 代码（训练 / 数据管线 / 评测 / SFT）：https://github.com/cmddirexit/miniNLM
+- 本仓库里也带了一份 `model.py`，权重自带架构，不依赖上面那个仓库也能加载
 - 语料为公开网络小说，仅用于研究；**模型输出可能复现训练语料片段**，商用前请自行评估版权风险
 - 权重以 MIT 许可发布
