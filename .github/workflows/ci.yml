@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cpu:
+    name: cpu / py${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: 安装依赖（CPU 版 torch，不需要 GPU）
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install numpy "sentencepiece>=0.2"
+
+      - name: 语法检查
+        run: python -m compileall -q .
+
+      - name: CPU 冒烟测试（前向 / 反向 / mask / 记忆槽 / KV cache）
+        run: python tests/smoke_test.py
+
+      - name: preset 表
+        run: python tools/check_presets.py
+
+      - name: 命令行自检
+        run: python chat.py --selftest
+
+      - name: 脚本语法
+        run: bash -n scripts/run_train.sh scripts/stop_train.sh
+
+      - name: 各入口 --help 可用
+        run: |
+          python train.py --help > /dev/null
+          python sample.py --help > /dev/null
+          python sft_data.py --help > /dev/null
+          python ask.py --help > /dev/null

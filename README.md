@@ -3,6 +3,15 @@
 从零训练的中文小说语言模型：46M 参数、7.2B token、单卡 16GB（AMD RX 9060 XT / WSL2 + ROCm）约 118 GPU 小时跑完。
 训练框架、模型结构、数据管线、SFT、推理全部手写，无第三方训练框架依赖（只有 `torch` + `sentencepiece`）。
 
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT">
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/pytorch-2.4%2B-ee4c2c.svg" alt="PyTorch 2.4+">
+  <img src="https://img.shields.io/badge/params-46.3M-brightgreen.svg" alt="46.3M params">
+  <img src="https://img.shields.io/badge/tokens-7.2B-yellow.svg" alt="7.2B tokens">
+  <img src="https://img.shields.io/badge/context-2048-9cf.svg" alt="2048 tokens">
+</p>
+
 > **English**: miniNLM is a from-scratch Chinese language model (46M params, thin 18×384 Transformer, 48k BPE)
 > pretrained on 7.2B tokens of Chinese web novels, trained end-to-end on a single 16 GB consumer GPU
 > (RX 9060 XT, WSL2 + ROCm) in ~118 GPU-hours. It ships its own data pipeline, a memory-slot mechanism
@@ -16,6 +25,25 @@
 | 训练 | 146,473 步 × 49,152 token，约 2.9 s/步 ≈ 17.5k tok/s，累计 **≈118 GPU 小时（5 天）** |
 | 结果 | `val_loss 4.0726` / `ppl 58.6`（训练协议）；独立复核 600 批 → `4.0576 ± 0.014` / `ppl 57.8` |
 | 生成 | 约 80 token/s（bf16，KV cache），有效上下文 2048（32 记忆槽 × 2 段） |
+
+---
+
+## 样例输出
+
+`ckpt_best.pt` 的真实采样（`temperature 0.75` / `top_k 40` / `repetition_penalty 1.15`）。未编辑，只在第一个合适的句号处截断：
+
+**提示词** `他推开门的瞬间，房间里弥漫着淡淡的血腥味。`
+
+```text
+他推开门的瞬间，房间里弥漫着淡淡的血腥味。
+“进来！”一个威严的声音响起，门吱呀一声推开，林牧带着杨帆和聂云飞走了进去。
+“你们这是？”聂云飞愣了一下，然后看向李强，一脸震惊。
+李强脸上有难以掩饰的惊讶之色，道：“林、林大人，您终于出来了。”
+“你真的是林大人？”聂云飞一脸激动的看着李强，眼睛都有点湿润了。
+```
+
+引号、分行、`道：` 这类对话格式是它学得最好的部分；再往后写两三句就会开始绕圈，这是 46M 参数的容量上限。
+更多提示词和「怎么读这些样例」：[examples/samples.md](examples/samples.md)。
 
 ---
 
@@ -79,6 +107,8 @@ python ask.py --ckpt out_sft/ckpt_sft_best.pt --q "你好，你是谁？"
 
 ## 记忆槽（`--n_mem 32`）
 
+![记忆槽：段与段之间的接力](docs/assets/memory-slots.svg)
+
 每段输入变成 `[读槽 32][本段 1024 token][写槽 32]`，总长 1088：
 
 - 读槽 = 上一段写槽的输出，段内所有 token 因果地看到它们 → 读到历史；
@@ -100,10 +130,13 @@ ask.py              按「用户/助手」格式对话
 eval_val.py         独立复算验证集 loss/ppl（带置信区间、分段诊断）
 gen_samples.py      固定提示词批量采样，落盘成 markdown 对比
 fit_curve.py        从 log.csv 拟合学习曲线、外推更大训练量
-examples/           示例 SFT 数据
+examples/           示例 SFT 数据 + 采样样例（samples.md）
 scripts/            无人值守训练（看护循环 / 优雅停止 / systemd unit）
 tools/              数据管线、基准测试、诊断脚本（legacy/ 是历史版本）
+tests/              CPU 冒烟测试（前向/反向/mask/记忆槽/KV cache，不需要数据与权重）
 docs/               架构评审、小模型调研、训练配方、SFT 指南、实验记录
+docs/assets/        文档配图（记忆槽示意图等）
+.github/workflows/  CI（CPU torch：语法 + 冒烟测试 + preset + CLI 自检）
 ```
 
 ## 文档
@@ -117,6 +150,23 @@ docs/               架构评审、小模型调研、训练配方、SFT 指南�
 | [docs/small-model-survey.md](docs/small-model-survey.md) | <100M 小模型横向调研（SmolLM2 / Qwen3 / MobileLLM） |
 | [docs/training-recipe.md](docs/training-recipe.md) | 学习率调度、embedding 不衰减、权重平均等配方的文献证据 |
 | [docs/runbook.md](docs/runbook.md) | 无人值守训练：断电自愈、优雅停止、任务计划 |
+| [examples/samples.md](examples/samples.md) | 真实采样样例与「怎么读这些样例」 |
+
+## 开发
+
+```bash
+python tests/smoke_test.py        # CPU 冒烟测试：不需要数据文件，也不需要权重，几秒钟跑完
+python tools/check_presets.py     # 打印各 preset 的参数量 / FLOPs / 速度
+python chat.py --selftest         # 命令行解析与异常输入的边界检查
+```
+
+CI（`.github/workflows/ci.yml`）在 Ubuntu + CPU 版 torch 上跑上面三项，外加 `compileall`、`bash -n` 和各入口的 `--help`，
+Python 3.10 与 3.12 各一遍，不需要 GPU。推送仓库后可以在 **Actions** 页看到结果；想要徽章就把下面一行加到标题下方，
+记得把 `<OWNER>/<REPO>` 换成实际地址：
+
+```markdown
+[![CI](https://github.com/<OWNER>/<REPO>/actions/workflows/ci.yml/badge.svg)](https://github.com/<OWNER>/<REPO>/actions/workflows/ci.yml)
+```
 
 ## 数据来源与许可
 
