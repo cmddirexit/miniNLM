@@ -33,3 +33,6 @@ Thumbs.db
 .venv/
 venv/
 *.egg-info/
+
+# 长文档只留在本地，不上传
+docs/

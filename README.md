@@ -12,12 +12,6 @@
   <img src="https://img.shields.io/badge/context-2048-9cf.svg" alt="2048 tokens">
 </p>
 
-> **English**: miniNLM is a from-scratch Chinese language model (46M params, thin 18×384 Transformer, 48k BPE)
-> pretrained on 7.2B tokens of Chinese web novels, trained end-to-end on a single 16 GB consumer GPU
-> (RX 9060 XT, WSL2 + ROCm) in ~118 GPU-hours. It ships its own data pipeline, a memory-slot mechanism
-> for long context, KV-cache decoding, and a masked-loss SFT pipeline. Code is MIT; the corpus is not
-> redistributed.
-
 | 指标 | 值 |
 |---|---|
 | 模型 | `thin`：18 层 × d384 × 8 头，GQA(2 KV 头)，QK-Norm，z-loss，46.3M 参数（非嵌入 27.9M） |
@@ -55,7 +49,7 @@
 - **现代小模型技巧**：GQA、QK-Norm、z-loss、`torch.compile`（1.9×）、原子写检查点、断点续训、完成标记。
 - **数据管线**：HF 原始 jsonl → 清洗（广告/目录/重复章）→ sentencepiece 训练 → 打包成 `uint16` 流，全流程可复现。
 - **KV cache 推理**：`chat.py` 交互式续写（滚动上下文、候选挑选、撤销、自动跟随新检查点）。
-- **SFT**：`sft_data.py` + `sft.py`，loss 只算「助手：」之后的回答（mask），附 `ask.py` 对话入口与完整实验记录。
+- **SFT**：`sft_data.py` + `sft.py`，loss 只算「助手：」之后的回答（mask），附 `ask.py` 对话入口与 25 条示例指令数据。
 
 ## 快速开始
 
@@ -63,8 +57,8 @@
 git clone <this-repo> && cd miniNLM
 pip install -r requirements.txt          # ROCm 见文件内注释
 
-# 1) 准备数据（自己造，或按 docs/data.md 的全流程重建）
-#    期望 data_v4/ 下有 train.bin / val.bin / spm48k_v4.model / meta.json
+# 1) 准备数据：data_v4/ 下需要 train.bin（uint16 token 流）、val.bin、
+#    spm48k_v4.model（sentencepiece）、meta.json（vocab_size / eos_id 等）
 
 # 2) 预训练（单卡 16GB 默认配置）
 python train.py --data_dir data_v4 --out_dir out \
@@ -107,7 +101,7 @@ python ask.py --ckpt out_sft/ckpt_sft_best.pt --q "你好，你是谁？"
 
 ## 记忆槽（`--n_mem 32`）
 
-![记忆槽：段与段之间的接力](docs/assets/memory-slots.svg)
+![记忆槽：段与段之间的接力](assets/memory-slots.svg)
 
 每段输入变成 `[读槽 32][本段 1024 token][写槽 32]`，总长 1088：
 
@@ -134,23 +128,9 @@ examples/           示例 SFT 数据 + 采样样例（samples.md）
 scripts/            无人值守训练（看护循环 / 优雅停止 / systemd unit）
 tools/              数据管线、基准测试、诊断脚本（legacy/ 是历史版本）
 tests/              CPU 冒烟测试（前向/反向/mask/记忆槽/KV cache，不需要数据与权重）
-docs/               架构评审、小模型调研、训练配方、SFT 指南、实验记录
-docs/assets/        文档配图（记忆槽示意图等）
+assets/             配图（记忆槽示意图，svg + png）
 .github/workflows/  CI（CPU torch：语法 + 冒烟测试 + preset + CLI 自检）
 ```
-
-## 文档
-
-| 文档 | 内容 |
-|---|---|
-| [docs/data.md](docs/data.md) | 数据从 HF 原始分片到 `train.bin` 的全流程与验收指标 |
-| [docs/sft-guide.md](docs/sft-guide.md) | SFT 原理、mask 机制、三轮实验（含踩坑） |
-| [docs/experiments.md](docs/experiments.md) | 预训练与 SFT 的实验记录、消融与数字 |
-| [docs/arch-review.md](docs/arch-review.md) | 架构体检：FLOPs 分解、解码瓶颈、可加入的论文改进 |
-| [docs/small-model-survey.md](docs/small-model-survey.md) | <100M 小模型横向调研（SmolLM2 / Qwen3 / MobileLLM） |
-| [docs/training-recipe.md](docs/training-recipe.md) | 学习率调度、embedding 不衰减、权重平均等配方的文献证据 |
-| [docs/runbook.md](docs/runbook.md) | 无人值守训练：断电自愈、优雅停止、任务计划 |
-| [examples/samples.md](examples/samples.md) | 真实采样样例与「怎么读这些样例」 |
 
 ## 开发
 
@@ -171,13 +151,10 @@ Python 3.10 与 3.12 各一遍，不需要 GPU。推送仓库后可以在 **Acti
 ## 数据来源与许可
 
 - 语料来自 HuggingFace [`wdndev/webnovel-chinese`](https://huggingface.co/datasets/wdndev/webnovel-chinese)（39 GB jsonl，一行一章）。清洗后 6951 本、127.94 亿字、448 万章。
-- **原始文本与 token 流不随仓库分发**（体积 + 版权原因）；`tools/dl_hf.py` 可重新下载，`docs/data.md` 有完整复现步骤。
+- **原始文本与 token 流不随仓库分发**（体积 + 版权原因）；`tools/dl_hf.py` 可重新下载原始分片。
 - 代码 MIT。模型权重若发布，其上承载的文本内容仍受原数据集许可约束。
 
 ## 已知限制
 
 - 46M 参数 + 网文语料：会写「网文腔」，但知识面窄、容易绕圈、2–3 句后跑题；温度 0.7–0.8 比 0.9 稳。
 - 贪心/极低温解码容易掉进重复循环，建议 `temperature 0.75 / top_k 40 / rep_penalty 1.15`。
-- SFT 只到「学会对话格式」的程度：25 条指令数据远不够，见 `docs/sft-guide.md` 的结论。
-- 显存吃满会让同卡输出桌面的 Windows 卡顿，`--mem_frac` 默认 0.85，白天建议 0.6。
-- `LoadLib(libhsa-amd-aqlprofile64.so) failed` 是 ROCm 良性告警，可忽略。

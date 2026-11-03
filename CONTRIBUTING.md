@@ -13,7 +13,7 @@ python tools/check_presets.py            # 只依赖 torch/numpy，不需要数�
 ## 改动前
 
 - 模型结构 / 训练逻辑的改动，请带上**可复现的实验数字**（loss 曲线、tok/s、显存峰值），
-  并写进 `docs/experiments.md`。
+  并在 PR 描述里给出复现命令。
 - 数据格式改动（`train.bin` / `meta.json` 字段）会破坏旧检查点，请在 PR 里明确说明。
 - 不要提交 `data*/`、`out*/`、`*.pt`、`*.bin`、`*.log` —— `.gitignore` 已经挡住了，但别用 `-f` 硬塞。
 
@@ -30,13 +30,13 @@ python tools/check_presets.py            # 只依赖 torch/numpy，不需要数�
 ```
 train: 修 resume 时 step 计数多算 1
 sft:   mask 边界把 EOS 漏掉的情况
-docs: 补 data.md 的清洗阈值
+tools: 补数据清洗的阈值
 ```
 
 ## 自检
 
 ```bash
-python -m py_compile *.py tools/*.py
-python tools/check_presets.py --preset thin
+python -m compileall -q .        # 语法
+python tests/smoke_test.py       # CPU 冒烟测试（不需要数据与权重）
 python chat.py --selftest        # 只测命令解析，不加载模型
 ```
