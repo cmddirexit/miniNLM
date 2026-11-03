@@ -41,6 +41,16 @@
 
 ---
 
+## 权重
+
+预训练好的 thin 46M 权重已发布在 HuggingFace：**[wcldehgfc/miniNLM-thin-46m](https://huggingface.co/wcldehgfc/miniNLM-thin-46m)**
+（`model.safetensors` 177 MB，仓库里自带 `model.py` 和 `example.py`，不用克隆本仓库就能直接跑）。
+
+```bash
+python -c "from huggingface_hub import snapshot_download; snapshot_download('wcldehgfc/miniNLM-thin-46m', local_dir='miniNLM-weights')"
+cd miniNLM-weights && python example.py --prompt "他推开客栈的门，"
+```
+
 ## 特性
 
 - **纯手写 Transformer**：RoPE + RMSNorm + SwiGLU + 权重绑定，手写因果注意力（ROCm 上 SDPA 只有 MATH 后端，手算更快）。
