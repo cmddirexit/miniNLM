@@ -1,0 +1,25 @@
+{"messages":[{"role":"user","content":"你好，你是谁？"},{"role":"assistant","content":"我是 miniNLM，一个在中文小说语料上训练出来的小模型。我能帮你续写故事、改写句子、聊聊天。"}]}
+{"messages":[{"role":"user","content":"谢谢"},{"role":"assistant","content":"不客气，随时可以找我。"}]}
+{"messages":[{"role":"user","content":"用一句话概括《西游记》讲了什么。"},{"role":"assistant","content":"唐僧师徒四人西天取经，一路降妖除魔的故事。"}]}
+{"messages":[{"role":"user","content":"解释一下「杯弓蛇影」是什么意思。"},{"role":"assistant","content":"把酒杯里的弓影当成蛇，形容人疑神疑鬼、自己吓自己。"}]}
+{"messages":[{"role":"user","content":"把这句话改简洁：他在心里面反复地想了很久很久。"},{"role":"assistant","content":"他反复思量了很久。"}]}
+{"messages":[{"role":"user","content":"这句话有语病，帮我改：经过这次教训，使我明白了许多道理。"},{"role":"assistant","content":"这次教训使我明白了许多道理。"}]}
+{"messages":[{"role":"user","content":"把「他很生气」改成动作描写。"},{"role":"assistant","content":"他一把把茶碗墩在桌上，茶水溅出来，手指攥得指节发白。"}]}
+{"messages":[{"role":"user","content":"写一句描写秋天傍晚的句子，不要超过二十个字。"},{"role":"assistant","content":"晚霞烧着半边天，风里有新翻的土腥味。"}]}
+{"messages":[{"role":"user","content":"不要用任何形容词，描写一场雪。"},{"role":"assistant","content":"雪落下来，落在屋檐上，落在井台上，落在他肩上，他没有拂。"}]}
+{"messages":[{"role":"user","content":"给我三个小说开头的点子。"},{"role":"assistant","content":"一、主角在葬礼上收到了死者的信。二、一觉醒来，全镇的人都忘了他的名字。三、他在旧书里翻到一张写着自己笔迹的欠条。"}]}
+{"messages":[{"role":"user","content":"帮我给一个古风男主起名字，要求两个字，带点清冷感。"},{"role":"assistant","content":"沈砚。砚台冰凉，落笔有声，听着就冷。"}]}
+{"messages":[{"role":"user","content":"写两句对话，表现两个人久别重逢。"},{"role":"assistant","content":"「你头发白了。」\n「你的也是。」"}]}
+{"messages":[{"role":"user","content":"请接着下面这段往下写，保持同样的风格：\n\n夜色如墨，雨点敲在青石板上。"},{"role":"assistant","content":"巷子尽头那盏灯还亮着，昏黄的一团，在雨里晃。他站在檐下没有动，等靴子上的泥被雨水冲干净，才抬手叩门。门开了一条缝，一双眼睛在缝里看了他很久，才慢慢把门让开。"}]}
+{"messages":[{"role":"user","content":"请接着下面这段往下写，保持同样的风格：\n\n老掌柜把钥匙推到我面前，说：这东西你拿着，别问。"},{"role":"assistant","content":"钥匙是黄铜的，齿口磨得发亮，摸上去却凉得刺手。我把它揣进怀里，只觉那点凉一直渗到心口。出了铺子，街上人声正闹，我却一个字也没听进去。"}]}
+{"messages":[{"role":"user","content":"如果我要写一个反派，怎么让他不显得脸谱化？"},{"role":"assistant","content":"给他一件他自己认为正确的事。读者可以不认同他的手段，但得看懂他为什么非这么做不可。"}]}
+{"messages":[{"role":"user","content":"我想写一个悬疑小说的第一章，你有什么建议？"},{"role":"assistant","content":"第一章不用急着死人，先把一处不对劲摆出来：一个多余的东西，或者一个少掉的人。让读者自己发现它，比你直接说出来更抓人。"}]}
+{"messages":[{"role":"user","content":"张三是谁？"},{"role":"assistant","content":"你没有给我任何设定，我不知道张三指的是谁。可以先告诉我他是哪本书、哪个故事里的人。"}]}
+{"messages":[{"role":"user","content":"你是什么模型？"},{"role":"assistant","content":"我是 miniNLM，参数量约四千六百万，训练数据是中文长篇小说。我不会联网，也没有记忆，只能在这次对话里和你聊。"}]}
+{"messages":[{"role":"user","content":"上面那句话是什么意思？"},{"role":"assistant","content":"我不确定你指的是哪一句，能把我说的原话贴一下吗？"}]}
+{"messages":[{"role":"user","content":"把下面这段翻成英文：他推开门，屋里没有人。"},{"role":"assistant","content":"He pushed the door open. There was no one inside."}]}
+{"messages":[{"role":"user","content":"用列表列出三种常见的武侠人物类型。"},{"role":"assistant","content":"一、名门正派里的少年，天赋高、心气也高。二、亦正亦邪的游侠，讲规矩却不讲王法。三、藏在市井里的老怪物，出手一次就够写十回。"}]}
+{"messages":[{"role":"user","content":"把这个场景换成第一人称写：他走进客栈，所有人的目光都落到他身上。"},{"role":"assistant","content":"我推门进去，客栈里正吵着，一下子静了。十几双眼睛齐齐钉在我身上，像在等我先开口。"}]}
+{"messages":[{"role":"user","content":"再说三个，要更冷门一点的。"},{"role":"assistant","content":"一、替人写状纸的讼师。二、守义庄的仵作。三、跑单帮的镖师遗孀。"}]}
+{"messages":[{"role":"user","content":"这段话太长，帮我压到三十个字以内：他从小就在这个镇上长大，镇上每一条街每一户人家他都熟得不能再熟，可是这一天他忽然觉得自己好像从来没有真正看过这个地方。"},{"role":"assistant","content":"他在镇上长大，熟门熟路，这天却像头一回看见它。"}]}
+{"messages":[{"role":"user","content":"写一段结尾，要留点余味，不要点破。"},{"role":"assistant","content":"后来我又去过那条巷子，灯还亮着。只是再没有人来开门。"}]}

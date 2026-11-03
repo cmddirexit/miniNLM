@@ -1,0 +1,6 @@
+# 训练只需要 torch + sentencepiece（+ numpy）
+# ROCm 用户：换成 https://pytorch.org 的 rocm 轮子，例如
+#   pip install torch --index-url https://download.pytorch.org/whl/rocm6.2
+torch>=2.4
+numpy>=1.24
+sentencepiece>=0.2.0

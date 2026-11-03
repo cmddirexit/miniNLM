@@ -1,0 +1,35 @@
+# 数据与训练产物：体积大 + 含版权文本，不进仓库
+data/
+data_v3/
+data_v4/
+data_sft/
+hf_novels*/
+热门小说/
+*.txt.sample
+
+# 检查点与打包后的 token 流
+out/
+out_*/
+*.pt
+*.safetensors
+*.bin
+*.idx
+
+# 日志与临时状态
+*.log
+*.log.*
+__pycache__/
+*.py[cod]
+.stop_train
+STOP
+DONE
+*.tmp
+
+# 编辑器 / 系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+.venv/
+venv/
+*.egg-info/

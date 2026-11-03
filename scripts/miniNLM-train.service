@@ -1,0 +1,22 @@
+[Unit]
+Description=miniNLM training watchdog (run_train.sh)
+After=network-online.target
+
+[Service]
+Type=simple
+# 改成你的仓库路径与解释器
+WorkingDirectory=/path/to/miniNLM
+Environment=PY=/path/to/python
+ExecStart=/bin/bash /path/to/miniNLM/scripts/run_train.sh
+# 训练自己是 setsid 起的，systemd 停这个 unit 只停看护循环；真正停训练用 stop_train.sh
+TimeoutStopSec=900
+Restart=no
+
+[Install]
+WantedBy=default.target
+
+# 安装（用户级，不需要 root）：
+#   cp scripts/miniNLM-train.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now miniNLM-train
+# 需要在没有登录会话时也跑，还要：loginctl enable-linger $USER
